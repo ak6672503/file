@@ -1,7 +1,6 @@
 ﻿
 // FileView.cpp: CFileView 类的实现
 //
-
 #include "pch.h"
 #include "framework.h"
 // SHARED_HANDLERS 可以在实现预览、缩略图和搜索筛选器句柄的
@@ -16,7 +15,8 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+#include <fstream>
+using namespace std;
 
 // CFileView
 
@@ -108,21 +108,66 @@ CFileDoc* CFileView::GetDocument() const // 非调试版本是内联的
 
 
 void CFileView::OnFileWrite()
-{
+{/*
 	FILE* pFile = fopen("1.txt", "w");
-	/*
+	
 	fwrite("www.baidu.comwww", 1, strlen("www.baiduwww.com"), pFile);
 	fseek(pFile, 0, SEEK_SET);
 	fwrite("ftp", 1, strlen("ftp"), pFile);
 	*/
 	//fwrite("欢迎",1, strlen("欢迎"), pFile);
-
+	/*
 	char buf[14] = "www.baidu.com";
 	buf[13] = '\0';
 	fwrite(buf, 1, 14, pFile);
 
 	fflush(pFile);
+	fclose(pFile);*/
+
+	/*
+	FILE* pFile = fopen("2.txt", "wb");
+	char ch[3];
+	ch[0] = 'a';
+	ch[1] = 10;
+	ch[2] = 'b';
+	fwrite(ch, 1, 3, pFile);
 	fclose(pFile);
+	*/
+	/*FILE* pFile = fopen("3.txt", "w");
+	int i = 98341;
+	fwrite(&i, 4, 1, pFile);
+	fclose(pFile);*/
+
+	/*FILE* pFile = fopen("3.txt", "w");
+	char ch[5];
+	ch[0] = 9 + 48;
+	ch[4] = 1 + 48;
+	ch[1] = 8 + 48;
+	ch[2] = 3 + 48;
+	ch[3] = 4 + 48;
+
+	fwrite(ch, 1, 5, pFile);
+	fclose(pFile);*/
+
+	/*ofstream ofs("4.txt");
+	ofs.write("www.baidu.com",strlen("www.baidu.com"));
+	ofs.close();*/
+
+	/*//定义一个句柄变量
+	HANDLE hFile;
+	//创建文件
+	hFile = CreateFile(L"5.txt", GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	//接收实际写入的字节数
+	DWORD dwWrites;
+	//写入数据
+	WriteFile(hFile, "www.baidu.com", strlen("www.baidu.com"), &dwWrites, NULL);
+	CloseHandle(hFile);*/
+
+	CFile file(L"6.txt", CFile::modeCreate | CFile::modeWrite);
+	file.Write("ww.baidu.cn",strlen("ww.baidu.cn"));
+	file.Close();
+
 }
 
 
@@ -134,7 +179,7 @@ void CFileView::OnFileRead()
 	fread(ch, 1, 100, pFile);
 	fclose(pFile);
 	::MessageBoxA(NULL, ch, "文件", 0);*/
-
+	/*
 	FILE* pFile = fopen("1.txt", "r");
 	char* pBuf;
 	fseek(pFile, 0, SEEK_END);
@@ -145,5 +190,43 @@ void CFileView::OnFileRead()
 	pBuf[len] = 0;
 	fclose(pFile);
 	::MessageBoxA(NULL, pBuf, "文件", 0);
+	*/
+
+	/*
+	FILE* pFile = fopen("2.txt", "rb");
+	char ch[100];
+	fread(ch, 1, 3, pFile);
+	ch[3] = 0;
+	fclose(pFile);
+	::MessageBoxA(NULL, ch, "文件", 0);
+	*/
+
+	//FILE* pFile = fopen("3.txt", "w");
+
+	/*ifstream ifs("4.txt");
+	char ch[100];
+	memset(ch, 0, 100);
+	ifs.read(ch, 100);
+	ifs.close();
+	::MessageBoxA(NULL, ch, "文件", 0);*/
+	/*
+	HANDLE hFile;
+	hFile = CreateFile(L"5.txt", GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	char ch[100];
+	DWORD dwReads;
+	ReadFile(hFile, ch, 100, &dwReads, NULL);
+	ch[dwReads] = 0;
+	CloseHandle(hFile);
+	MessageBoxA(NULL, ch, "文件", 0);*/
+
+	CFile file(L"6.txt", CFile::modeRead);
+	char* pBuf;
+	UINT dwFileLen;
+	dwFileLen = (UINT)file.GetLength(); \
+		pBuf = new char[dwFileLen + 1];
+	pBuf[dwFileLen] = 0;
+	file.Read(pBuf, dwFileLen);
+	file.Close();
+	MessageBoxA(NULL, pBuf, "文件", 0);
 
 }
