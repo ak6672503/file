@@ -29,6 +29,8 @@ BEGIN_MESSAGE_MAP(CFileView, CView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
 	ON_COMMAND(IDM_FILE_WRITE, &CFileView::OnFileWrite)
 	ON_COMMAND(IDM_FILE_READ, &CFileView::OnFileRead)
+	ON_COMMAND(IDM_REG_WRITE, &CFileView::OnRegWrite)
+	ON_COMMAND(IDM_REG_READ, &CFileView::OnRegRead)
 END_MESSAGE_MAP()
 
 // CFileView 构造/析构
@@ -164,9 +166,22 @@ void CFileView::OnFileWrite()
 	WriteFile(hFile, "www.baidu.com", strlen("www.baidu.com"), &dwWrites, NULL);
 	CloseHandle(hFile);*/
 
-	CFile file(L"6.txt", CFile::modeCreate | CFile::modeWrite);
+	/*CFile file(L"6.txt", CFile::modeCreate | CFile::modeWrite);
 	file.Write("ww.baidu.cn",strlen("ww.baidu.cn"));
-	file.Close();
+	file.Close();*/
+
+	CFileDialog fileDlg(FALSE);
+	fileDlg.m_ofn.lpstrTitle = L"我的文件保存对话框";
+	fileDlg.m_ofn.lpstrFilter = L"Text Files(*.txt)\0*.txt\0All Files(*.*)\0*.*\0\0";
+	fileDlg.m_ofn.lpstrDefExt = L"txt";
+	
+	if (IDOK == fileDlg.DoModal()) {
+		CFile file(fileDlg.GetFileName(), CFile::modeCreate | CFile::modeWrite);
+		file.Write("www.baiducc.com",strlen("www.baiducc.com"));
+		file.Close();
+	
+	}
+
 
 }
 
@@ -219,14 +234,88 @@ void CFileView::OnFileRead()
 	CloseHandle(hFile);
 	MessageBoxA(NULL, ch, "文件", 0);*/
 
-	CFile file(L"6.txt", CFile::modeRead);
+	/*CFile file(L"6.txt", CFile::modeRead);
 	char* pBuf;
 	UINT dwFileLen;
-	dwFileLen = (UINT)file.GetLength(); \
-		pBuf = new char[dwFileLen + 1];
+	dwFileLen = (UINT)file.GetLength(); 
+	pBuf = new char[dwFileLen + 1];
 	pBuf[dwFileLen] = 0;
 	file.Read(pBuf, dwFileLen);
 	file.Close();
-	MessageBoxA(NULL, pBuf, "文件", 0);
+	MessageBoxA(NULL, pBuf, "文件", 0);*/
+
+
+	CFileDialog fileDlg(TRUE);
+	fileDlg.m_ofn.lpstrTitle = L"我的文件打开对话框";
+	fileDlg.m_ofn.lpstrFileTitle = L"Text Files(*.txt)\0*.txt\0All Files(*.*)\0*.*\0\0";
+
+	if (IDOK == fileDlg.DoModal()) {
+		CFile file(fileDlg.GetFileName(), CFile::modeRead);
+		char* pBuf;
+		UINT dwFileLen;
+		dwFileLen = (UINT)file.GetLength();
+		pBuf = new char[dwFileLen + 1];
+		pBuf[dwFileLen] = 0;
+		file.Read(pBuf, dwFileLen);
+		file.Close();
+		MessageBoxA(NULL,pBuf,"文件",0);
+	}
+
+}
+
+
+void CFileView::OnRegWrite()
+{
+	// TODO: 在此添加命令处理程序代码
+
+	HKEY hKey;
+	LONG lResult;
+	lResult = RegCreateKeyEx(HKEY_LOCAL_MACHINE,
+		L"Software\\www.cdwedscc.com\\admin", 
+		0, NULL, REG_OPTION_NON_VOLATILE,
+		KEY_WRITE|KEY_WOW64_64KEY, NULL, &hKey, NULL);
+
+	if (lResult == ERROR_SUCCESS) {
+		MessageBox(L"创建注册表成功");
+	}
+	else {
+		MessageBox(L"创建注册表失败");
+		return;
+	}
+
+	RegSetValue(hKey, NULL, REG_SZ, L"zhangsan", _tcslen(L"zhangsan"));
+	DWORD dwAge = 30;
+	RegSetValueEx(hKey, L"age", 0, REG_DWORD, (CONST BYTE*) & dwAge, 4);
+	RegCloseKey(hKey);
+
+
+}
+
+
+void CFileView::OnRegRead()
+{
+	// TODO: 在此添加命令处理程序代码
+
+	/*HKEY hKey;
+	LONG lValue;
+	RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SoftWare", 0, KEY_READ | KEY_WOW64_64KEY, &hKey);
+	LONG lResult;
+	lResult = RegQueryValue(hKey, L"www.cdwedscc.com\\admin", NULL, &lValue);
+	if (lResult == ERROR_SUCCESS) {
+		TCHAR* pBuf = new TCHAR[lValue];
+		RegQueryValue(hKey, L"www.cdwedscc.com\\admin", pBuf, &lValue);
+		MessageBox(pBuf);
+	}*/
+
+	HKEY hKey;
+	RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"www.cdwedscc.com\\admin", 0, KEY_READ | KEY_WOW64_64KEY, &hKey);
+	DWORD dwType;
+	DWORD dwValue;
+	DWORD dwAge;
+	RegQueryValueEx(hKey, L"age", 0, &dwType, (LPBYTE)&dwAge, &dwValue);
+	CString str;
+	str.Format(L"age=%d", dwAge);
+	MessageBox(str);
+
 
 }

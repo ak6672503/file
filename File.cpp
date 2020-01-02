@@ -93,7 +93,7 @@ BOOL CFileApp::InitInstance()
 	// 更改用于存储设置的注册表项
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
-	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
+	SetRegistryKey(_T("shizhendema"));
 	LoadStdProfileSettings(4);  // 加载标准 INI 文件选项(包括 MRU)
 
 
@@ -124,6 +124,23 @@ BOOL CFileApp::InitInstance()
 	// 唯一的一个窗口已初始化，因此显示它并对其进行更新
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+
+
+//	WritePrivateProfileString(L"www.caw.com",  L"admin", L"zhangsan", L".\\file.ini");
+
+	/*CString str;
+	::GetPrivateProfileString(L"www.caw.com", L"admin", L"SWA", str.GetBuffer(100), 100, L".//file.ini");
+	AfxMessageBox(str);*/
+
+	//WriteProfileString(L"www.ccc.com",L"admin",L"zhangsan");
+
+	/*CString str;	
+	str = GetProfileString(L"www.ccc.com", L"admin");
+	AfxMessageBox(str);*/
+
+
+
 	return TRUE;
 }
 
